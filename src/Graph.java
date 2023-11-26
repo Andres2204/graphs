@@ -11,7 +11,7 @@ class Graph {
 
     private int V; // No. vertices
 
-    // [=================== Constructors ===================]
+    // [=================== Constructors And Initialization Methods ===================]
 
     public Graph(String s) {
         String[] nodeVecs = s.replace("(", "").replace(")", "").split(",");
@@ -21,7 +21,7 @@ class Graph {
 
     }
 
-    public void createAdjacencyList(String[] nodeVecs) {
+    private void createAdjacencyList(String[] nodeVecs) {
         // count vertex
         String n = "";
         for (int i = 0; i < nodeVecs.length; i++) {
@@ -40,13 +40,10 @@ class Graph {
         }
     }
 
-    public boolean verifyType(String[] nodeVecs) {
-
-        System.out.println(Arrays.asList(nodeVecs));
-
+    private boolean verifyType(String[] nodeVecs) {
         for (int i = 0; i < nodeVecs.length; i+=3) {
             for (int j = 0; j < nodeVecs.length; j+=3) {
-                if (nodeVecs[i+1].equals(nodeVecs[j]) && nodeVecs[i].equals(nodeVecs[j])) return true;
+                if (nodeVecs[i+1].equals(nodeVecs[j]) && nodeVecs[i].equals(nodeVecs[j+1])) return true;
             }
         }
         return false;
@@ -55,11 +52,11 @@ class Graph {
     private void connectNodes(String[] nodeVecs, boolean isDirected) {
         for (int i = 0; i < nodeVecs.length; i+=3) {
             int toConnect = getIndexOf(nodeVecs[i].charAt(0));
-            if (toConnect != -1) appendToEnd(adjacencyList[toConnect], new Node(nodeVecs[i+1].charAt(0)));
+            if (toConnect != -1) appendToEnd(adjacencyList[toConnect], new Node(nodeVecs[i+1].charAt(0), Integer.parseInt(nodeVecs[i+2])));
             
             if (!isDirected) {
                 toConnect = getIndexOf(nodeVecs[i+1].charAt(0));
-                if (toConnect != -1) appendToEnd(adjacencyList[toConnect], new Node(nodeVecs[i].charAt(0)));
+                if (toConnect != -1) appendToEnd(adjacencyList[toConnect], new Node(nodeVecs[i].charAt(0), Integer.parseInt(nodeVecs[i+2])));
             } 
         }
     }
@@ -79,7 +76,7 @@ class Graph {
         }
         return matrix;
     }
-
+    
     public boolean BFS(char origin, char target) {
         Queue<Character> queue = new LinkedList<>();
         queue.add(origin);
