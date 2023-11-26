@@ -1,14 +1,21 @@
+import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.Queue;
+
 class Graph {
     // [=================== Attributes ===================]
     
     private Node[] adjacencyList;
-    boolean isDirected = false;
+    private boolean isDirected;
+    
+
+    private int V; // No. vertices
 
     // [=================== Constructors ===================]
 
-    public Graph(String s, boolean isDirected) {
+    public Graph(String s) {
         String[] nodeVecs = s.replace("(", "").replace(")", "").split(",");
-        this.isDirected = verifyDirection(nodeVecs);
+        this.isDirected = verifyType(nodeVecs);
         createAdjacencyList(nodeVecs);
         connectNodes(nodeVecs, isDirected);
 
@@ -24,6 +31,8 @@ class Graph {
             }
         }
 
+        this.V = n.length();
+
         // create vec list
         adjacencyList = new Node[n.length()];
         for (int i = 0; i < adjacencyList.length; i++) {
@@ -31,9 +40,15 @@ class Graph {
         }
     }
 
-    // TODO: verificacion de si es un grafo diriguido o no
-    public boolean verifyDirection(String[] nodeVecs) {
+    public boolean verifyType(String[] nodeVecs) {
 
+        System.out.println(Arrays.asList(nodeVecs));
+
+        for (int i = 0; i < nodeVecs.length; i+=3) {
+            for (int j = 0; j < nodeVecs.length; j+=3) {
+                if (nodeVecs[i+1].equals(nodeVecs[j]) && nodeVecs[i].equals(nodeVecs[j])) return true;
+            }
+        }
         return false;
     }
 
@@ -65,6 +80,26 @@ class Graph {
         return matrix;
     }
 
+    public boolean BFS(char origin, char target) {
+        Queue<Character> queue = new LinkedList<>();
+        queue.add(origin);
+
+        Node p;
+        char current;
+        while(!queue.isEmpty()) {
+            current = queue.poll();
+
+            if (current == target) return true;
+
+            p = adjacencyList[getIndexOf(current)].getNext();
+            while (p != null) {
+                System.out.println(queue.toString() + " -> " + (queue.isEmpty() ? "Empty" : "Elements In"));
+                if (!queue.contains(p.getData()) && p.getData() != origin) queue.add(p.getData());
+                p = p.getNext();
+            }
+        }
+        return false;
+    }
 
     // [=================== Utitly ===================]
 
@@ -104,12 +139,19 @@ class Graph {
 
     // [=================== Getters and Setters ===================]
 
-
     public Node[] getAdjacencyList() {
         return adjacencyList;
     }
 
-    public void setAdjacencyList(Node[] adjacencyList) {
+    public void setAdjacencyList(Node[] adjacencyList) {        
         this.adjacencyList = adjacencyList;
+    }
+
+    public boolean isDirected() {
+        return isDirected;
+    }
+
+    public int getV() {
+        return V;
     }
 }
