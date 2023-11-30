@@ -14,6 +14,9 @@ public class App {
             System.out.println();
         }
 
+        graph.getIncidencyMatrix();
+
+
 
         System.out.println("Search -> " + graph.BFS('A', 'Z'));
     }
