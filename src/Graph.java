@@ -9,6 +9,7 @@ class Graph {
 
     private Node[] adjacencyList;
     private boolean isDirected;
+    private int incidencyMatrix[][] = new int[3][3];
     private int V; // No. vertices
 
     // [=================== Constructors And Initialization Methods
@@ -83,6 +84,19 @@ class Graph {
             }
         }
         return matrix;
+    }
+
+    public void getIncidencyMatrix() {
+        System.out.println("Incidency Matrix: ");
+
+
+        for (int i = 0; i < adjacencyList.length; i++) {
+            for (int j = 0; j < adjacencyList.length; j++) {
+                System.out.print(incidencyMatrix[i][j] + " ");
+            }
+            System.out.println();
+        }
+        // return incidencyMatrix;
     }
 
     public boolean BFS(char origin, char target) {
@@ -238,8 +252,12 @@ class Graph {
     private void appendToEnd(Node start, Node x) {
         if (start != null) {
             Node p = start;
+            int i = 0;
+            int j = 0;
             while (p.getNext() != null) {
                 p = p.getNext();
+                this.incidencyMatrix[i++][j++] = 1;
+                this.incidencyMatrix[i++][j++] = 1;
             }
             p.setNext(x);
         }

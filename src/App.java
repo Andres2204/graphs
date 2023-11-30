@@ -14,6 +14,9 @@ public class App {
             System.out.println();
         }
 
+        graph.getIncidencyMatrix();
+
+
 
         System.out.println("\nSearch -> " + graph.BFS('A', 'Z'));
         graph.getTable(0, 7);
