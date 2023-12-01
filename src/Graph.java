@@ -165,18 +165,19 @@ class Graph {
 
     // Search methods
 
-    public boolean BFS(char origin, char target) {
+    public String BFS(char origin, char target) {
         Queue<Character> queue = new LinkedList<>();
         queue.add(origin);
-
+        String s = "";
         Node p;
         char current;
         while (!queue.isEmpty()) {
             current = queue.poll();
-
+            
+            s += s.contains(current +"") ? "" : current +"";
             if (current == target)
-                return true;
-
+            return s;
+            
             p = adjacencyList[getIndexOf(current)].getNext();
             while (p != null) {
                 // System.out.println(queue.toString() + " -> " + (queue.isEmpty() ? "Empty" :
@@ -186,7 +187,7 @@ class Graph {
                 p = p.getNext();
             }
         }
-        return false;
+        return s;
     }
 
     public void bellmanFord(int[][] graph, int numNodes, int startNode) {

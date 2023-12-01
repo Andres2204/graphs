@@ -20,6 +20,7 @@ public class App {
 
                 System.out.print("\n" + mainMenu());
                 opt = Integer.parseInt(read.nextLine());
+                char aux1, aux2;
 
                 switch (opt) {
 
@@ -55,10 +56,19 @@ public class App {
                     break;
 
                     case 5: // BFS
-                        System.out.println("\nSearch BFS -> " + graph.BFS('A', 'Z'));
+
+                        System.out.println("Ingrese nodo de inicio: ");
+                        aux1 = read.nextLine().toCharArray()[0];
+
+                        System.out.println("Ingrese nodo a buscar");
+                        aux2 = read.nextLine().toCharArray()[0];
+
+                        System.out.println("\nSearch BFS -> " + graph.BFS(aux1, aux2));
                     break;
 
                     case 6: // DFS
+                        System.out.println("Ingrese nodo de inicio: ");
+                        aux1 = read.nextLine().toCharArray()[0];
                         System.out.println("Search DFS -> " + graph.DFS('A'));
                     break;
 
