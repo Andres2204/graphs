@@ -110,6 +110,37 @@ class Graph {
         return false;
     }
 
+    public void bellmanFord(int[][] graph, int numNodes, int startNode) {
+        int[] distance = new int[numNodes];
+
+        Arrays.fill(distance, Integer.MAX_VALUE);
+        distance[startNode] = 0;
+
+        for (int i = 0; i < numNodes - 1; i++) {
+            for (int u = 0; u < numNodes; u++) {
+                for (int v = 0; v < numNodes; v++) {
+                    if (graph[u][v] != 0 && distance[u] != Integer.MAX_VALUE && distance[u] + graph[u][v] < distance[v]) {
+                        distance[v] = distance[u] + graph[u][v];
+                    }
+                }
+            }
+        }
+
+        for (int u = 0; u < numNodes; u++) {
+            for (int v = 0; v < numNodes; v++) {
+                if (graph[u][v] != 0 && distance[u] != Integer.MAX_VALUE && distance[u] + graph[u][v] < distance[v]) {
+                    System.out.println("El grafo contiene un ciclo de peso negativo.");
+                    return;
+                }
+            }
+        }
+
+        System.out.println("Nodo\tDistancia desde el Nodo Inicial");
+        for (int i = 0; i < numNodes; i++) {
+            System.out.println(i + "\t\t" + distance[i]);
+        }
+    }
+
     // [=================== Utitly ===================]
 
     public int getIndexOf(char c) {

@@ -14,9 +14,7 @@ public class App {
             System.out.println();
         }
 
-        graph.getIncidencyMatrix();
-
-
+        graph.bellmanFord(matrix, graph.getV(), 0);
 
         System.out.println("Search -> " + graph.BFS('A', 'Z'));
     }
