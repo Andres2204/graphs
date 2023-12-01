@@ -1,6 +1,4 @@
-import java.lang.reflect.Array;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.Queue;
 
@@ -72,6 +70,7 @@ class Graph {
 
     // [=================== Methods ===================]
 
+    // TODO: fix incidencyMatrix
     public int[][] getAdjacencyMatrix() {
         int matrix[][] = new int[adjacencyList.length][adjacencyList.length];
 
@@ -123,21 +122,46 @@ class Graph {
         return false;
     }
 
-    // shortest way
-
-    public void dijkstra(char start, char target) {
-        dijkstra(getIndexOf(start), getIndexOf(target));
+    public String DFS(char start) {
+        return DFS(adjacencyList[getIndexOf(start)].getData(), new boolean[adjacencyList.length]);
     }
 
-    public Object[][][] dijkstra(int startIndex, int targetIndex) {
+    private String DFS(char v, boolean[] visited) {
+        String s = v+"";
+        int w = getIndexOf(v);
+        visited[w] = true;
+        Node p = adjacencyList[w];
+        while (p != null) {
+            w = getIndexOf(p.getData());
+            if (!visited[w]) {
+                s += DFS(p.getData(), visited);
+            }
+            p = p.getNext();
+        }
+
+        return s;
+    }
+
+    // dijkstra methods
+
+    public Object[] dijkstra(char start, char target) {
+        Object[] table = dijkstra(getIndexOf(start), getIndexOf(target));
+
+        return table;
+    }
+
+    private Object[] dijkstra(int startIndex, int targetIndex) {
         Object[][][] table = new Object[V][V][2];
+        // table[vertice][vertice][distance, verticename]
 
         ArrayList<Integer> discartedRows = new ArrayList<>();
+        int currentIndex = startIndex;
+        boolean founded = false;
+        char targetChar = adjacencyList[targetIndex].getData();
+
         String s ="";
         int minDistance=0;
 
-        // table[vertice][vertice][distance, verticename]
-        int currentIndex = startIndex;
         ArrayList<int[]> minValues = null; // [index, wigth, char]
 
         for (int i = 0; i < adjacencyList.length; i++) {
@@ -154,16 +178,12 @@ class Graph {
                 table[currentIndex][i][1] = adjacencyList[currentIndex].getData(); // char
             }
 
-            s+= (char) table[currentIndex][i][1];
-
-            discartedRows.add(currentIndex);
-            
+            discartedRows.add(currentIndex);            
             minValues = null; // delete values
 
             // Search connections of current node
 
             Node p = adjacencyList[currentIndex].getNext();
-            // TODO: Hacer una vuelta completa verifificando incluso lo que no deberia suceder
             while (p != null) {
                 int pIndex = getIndexOf(p.getData());
                 if (!discartedRows.contains(pIndex)) {
@@ -189,8 +209,6 @@ class Graph {
 
             // verificar si existe otro valor minimo igual
 
-            // TODO: Pasar lo valores que no sean minimos, siempre y cuando la linea no este descartada.
-
             minValues = new ArrayList<int[]>();
             for (int j = 1; j < table.length; j++) {
                 if (table[j][i][0] != null) {
@@ -203,43 +221,34 @@ class Graph {
                 }
                 
             }
-            if (minValues.size() != 0) currentIndex = minValues.get(0)[0];
-            minDistance = (int) table[currentIndex][i][0];
-
-        }
-
-        System.out.println("Distancia: " + minDistance);
-        System.out.println("Recorrido: " + s);
-
-        // show table (temp)
-        for (int i = 0; i < table.length; i++) {
-            for (int j = 0; j < table.length; j++) {
-                String ss = table[i][j][0] + ", " + table[i][j][1];
-                System.out.print((!ss.contains("null") ? ss : "----") + "\t");
+            
+            if (currentIndex == targetIndex) founded = true;
+            if (!founded) {
+                s += !s.contains( ""+table[currentIndex][i][1] ) ? ""+table[currentIndex][i][1] : "";
+                minDistance = (int) table[currentIndex][i][0];
+            } else if (founded) {
+                s += !s.contains(targetChar+"") ? ""+targetChar : "";
+                minDistance = (int) table[currentIndex][i][0];
             }
-            System.out.println();
-        }
+            if (minValues.size() != 0) currentIndex = minValues.get(0)[0];
 
-        return table;
+        }
+        return new Object[] {table, s, minDistance};
     }
 
-    public void shortestWay() {
+    public String shortestWay(char start, char end) {
+        return (String) dijkstra(start, start)[1];
+    }
 
+    public int minDistance(char start, char end) {
+        return (int) dijkstra(start, start)[2];
+    }
+
+    public Object[][][] getTable(char start, char end) {
+        return (Object[][][]) dijkstra(start, end)[0];
     }
 
     // [=================== Utitly ===================]
-
-    // TODO: ver si es necesario
-    // public char[] edgesWith(char c) {
-    // int ci = getIndexOf(c);
-
-    // for (int i = 0; i < adjacencyList.length; i++) {
-    // if (adjacencyList[i].getData() == c) continue;
-    // Node p = adjacencyList[i].getNext()
-
-    // while(p != null) {}
-    // }
-    // }
 
     public int getIndexOf(char c) {
         for (int i = 0; i < adjacencyList.length; i++) {
@@ -250,6 +259,16 @@ class Graph {
     }
 
     private void appendToEnd(Node start, Node x) {
+        if (start != null) {
+            Node p = start;
+            while (p.getNext() != null) {
+                p = p.getNext();
+            }
+            p.setNext(x);
+        }
+    }
+
+    private void appendToEnd2(Node start, Node x) {
         if (start != null) {
             Node p = start;
             int i = 0;
@@ -292,6 +311,18 @@ class Graph {
                 }
             }
         }
+    }
+
+    public String showTable(Object[][][] table) {
+        String s = "";
+        for (int i = 0; i < table.length; i++) {
+            for (int j = 0; j < table.length; j++) {
+                String ss = table[i][j][0] + ", " + table[i][j][1];
+                s += (!ss.contains("null") ? ss : "----") + "\t";
+            }
+            s+="\n";
+        }
+        return s;
     }
 
     // [=================== Getters and Setters ===================]

@@ -14,12 +14,11 @@ public class App {
             System.out.println();
         }
 
-        graph.getIncidencyMatrix();
+        Object[] dijkstra = graph.dijkstra('A', 'Z');
+        System.out.println(graph.showTable((Object[][][]) dijkstra[0]));
+        System.out.println("\n-> " + dijkstra[1] + " " + dijkstra[2]);
 
-
-
-        System.out.println("\nSearch -> " + graph.BFS('A', 'Z'));
-        graph.getTable(0, 7);
+        System.out.println("\nSearch BFS -> " + graph.BFS('A', 'Z'));
+        System.out.println(graph.DFS('A'));
     }
 }
-
