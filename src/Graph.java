@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Queue;
 
@@ -7,8 +8,9 @@ class Graph {
 
     private Node[] adjacencyList;
     private boolean isDirected;
-    private int incidencyMatrix[][] = new int[3][3];
+    private int incidencyMatrix[][];
     private int V; // No. vertices
+    private int E; // No. edges
 
     // [=================== Constructors And Initialization Methods
     // ===================]
@@ -16,6 +18,10 @@ class Graph {
     public Graph(String s) {
         String[] nodeVecs = s.replace(" ", "").replace("(", "").replace(")", "").split(",");
         this.isDirected = verifyType(nodeVecs);
+        V = 0;
+        E = 0;
+
+        // creation methods
         createAdjacencyList(nodeVecs);
         connectNodes(nodeVecs, isDirected);
         sortList();
@@ -55,22 +61,26 @@ class Graph {
     private void connectNodes(String[] nodeVecs, boolean isDirected) {
         for (int i = 0; i < nodeVecs.length; i += 3) {
             int toConnect = getIndexOf(nodeVecs[i].charAt(0));
-            if (toConnect != -1)
+            if (toConnect != -1) {
                 appendToEnd(adjacencyList[toConnect],
                         new Node(nodeVecs[i + 1].charAt(0), Integer.parseInt(nodeVecs[i + 2])));
+                E++;
+            }
 
             if (!isDirected) {
                 toConnect = getIndexOf(nodeVecs[i + 1].charAt(0));
-                if (toConnect != -1)
+                if (toConnect != -1) {
                     appendToEnd(adjacencyList[toConnect],
                             new Node(nodeVecs[i].charAt(0), Integer.parseInt(nodeVecs[i + 2])));
+                }
             }
         }
     }
 
     // [=================== Methods ===================]
 
-    // TODO: fix incidencyMatrix
+    // Matrices methods
+
     public int[][] getAdjacencyMatrix() {
         int matrix[][] = new int[adjacencyList.length][adjacencyList.length];
 
@@ -85,18 +95,54 @@ class Graph {
         return matrix;
     }
 
-    public void getIncidencyMatrix() {
-        System.out.println("Incidency Matrix: ");
+    public int[][] getIncidencyMatrix() {
+        incidencyMatrix = new int[V][E];
+        HashMap<Integer, Character[]> edgesNames = edgesNames();
+        for (Integer i = 0; i < edgesNames.size(); i++) {
+            int aIndex = getIndexOf(edgesNames.get(i+1)[0]);
+            int bIndex = getIndexOf(edgesNames.get(i+1)[1]);
 
+            incidencyMatrix[aIndex][i] = 1;
+            incidencyMatrix[bIndex][i] = isDirected ? -1 : 1;
+        }
+        return incidencyMatrix;
+    }
+
+    public HashMap<Integer, Character[]> edgesNames() {
+
+        HashMap<Integer, Character[]> edgeNames = new HashMap();
 
         for (int i = 0; i < adjacencyList.length; i++) {
-            for (int j = 0; j < adjacencyList.length; j++) {
-                System.out.print(incidencyMatrix[i][j] + " ");
+            Node p = adjacencyList[i];
+            char aux = p.getData();
+            // search existance (not directed)
+            p = p.getNext();
+            while (p != null) {
+                if (!isDirected) {
+                    boolean exists = false;
+                    for (Character[] edgeValues : edgeNames.values()) {
+                        if (edgeValues[0] == p.getData() && edgeValues[1] == aux) {
+                            exists = true;
+                            break;
+                        }
+                    }
+
+                    if (!exists)
+                        edgeNames.put(edgeNames.size() + 1, new Character[] { aux, p.getData() });
+                } else {
+                    edgeNames.put(edgeNames.size() + 1, new Character[] { aux, p.getData() });
+                }
+                p = p.getNext();
             }
-            System.out.println();
         }
-        // return incidencyMatrix;
+
+        if (edgeNames.size() != E)
+            System.out.println("DIFERENTES");
+
+        return edgeNames;
     }
+
+    // Search methods
 
     public boolean BFS(char origin, char target) {
         Queue<Character> queue = new LinkedList<>();
@@ -127,7 +173,7 @@ class Graph {
     }
 
     private String DFS(char v, boolean[] visited) {
-        String s = v+"";
+        String s = v + "";
         int w = getIndexOf(v);
         visited[w] = true;
         Node p = adjacencyList[w];
@@ -159,18 +205,19 @@ class Graph {
         boolean founded = false;
         char targetChar = adjacencyList[targetIndex].getData();
 
-        String s ="";
-        int minDistance=0;
+        String s = "";
+        int minDistance = 0;
 
         ArrayList<int[]> minValues = null; // [index, wigth, char]
 
         for (int i = 0; i < adjacencyList.length; i++) {
-            if ( i > 0 ) {
+            if (i > 0) {
                 for (int j = 0; j < (minValues != null ? minValues.size() : 1); j++) {
                     if (!discartedRows.contains(minValues.get(j)[0])) {
 
                         table[minValues.get(j)[0]][i][0] = i > 0 ? minValues.get(j)[1] : 0; //
-                        table[minValues.get(j)[0]][i][1] = i > 0 ? (char) minValues.get(j)[2] : adjacencyList[currentIndex].getData(); // char
+                        table[minValues.get(j)[0]][i][1] = i > 0 ? (char) minValues.get(j)[2]
+                                : adjacencyList[currentIndex].getData(); // char
                     }
                 }
             } else {
@@ -178,7 +225,7 @@ class Graph {
                 table[currentIndex][i][1] = adjacencyList[currentIndex].getData(); // char
             }
 
-            discartedRows.add(currentIndex);            
+            discartedRows.add(currentIndex);
             minValues = null; // delete values
 
             // Search connections of current node
@@ -219,21 +266,23 @@ class Graph {
                         minValues.add(minInfo);
                     }
                 }
-                
+
             }
-            
-            if (currentIndex == targetIndex) founded = true;
+
+            if (currentIndex == targetIndex)
+                founded = true;
             if (!founded) {
-                s += !s.contains( ""+table[currentIndex][i][1] ) ? ""+table[currentIndex][i][1] : "";
+                s += !s.contains("" + table[currentIndex][i][1]) ? "" + table[currentIndex][i][1] : "";
                 minDistance = (int) table[currentIndex][i][0];
             } else if (founded) {
-                s += !s.contains(targetChar+"") ? ""+targetChar : "";
+                s += !s.contains(targetChar + "") ? "" + targetChar : "";
                 minDistance = (int) table[currentIndex][i][0];
             }
-            if (minValues.size() != 0) currentIndex = minValues.get(0)[0];
+            if (minValues.size() != 0)
+                currentIndex = minValues.get(0)[0];
 
         }
-        return new Object[] {table, s, minDistance};
+        return new Object[] { table, s, minDistance };
     }
 
     public String shortestWay(char start, char end) {
@@ -263,20 +312,6 @@ class Graph {
             Node p = start;
             while (p.getNext() != null) {
                 p = p.getNext();
-            }
-            p.setNext(x);
-        }
-    }
-
-    private void appendToEnd2(Node start, Node x) {
-        if (start != null) {
-            Node p = start;
-            int i = 0;
-            int j = 0;
-            while (p.getNext() != null) {
-                p = p.getNext();
-                this.incidencyMatrix[i++][j++] = 1;
-                this.incidencyMatrix[i++][j++] = 1;
             }
             p.setNext(x);
         }
@@ -320,7 +355,7 @@ class Graph {
                 String ss = table[i][j][0] + ", " + table[i][j][1];
                 s += (!ss.contains("null") ? ss : "----") + "\t";
             }
-            s+="\n";
+            s += "\n";
         }
         return s;
     }
@@ -341,5 +376,9 @@ class Graph {
 
     public int getV() {
         return V;
+    }
+
+    public int getE() {
+        return E;
     }
 }
