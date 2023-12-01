@@ -2,6 +2,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Queue;
+import java.util.Arrays;
 
 class Graph {
     // [=================== Attributes ===================]
@@ -26,6 +27,11 @@ class Graph {
         createAdjacencyList(nodeVecs);
         connectNodes(nodeVecs, isDirected);
         sortList();
+        vertices = new char[adjacencyList.length];
+        for (int i = 0; i < adjacencyList.length; i++) {
+            vertices[i] = adjacencyList[i].getData();
+        }
+
     }
 
     private void createAdjacencyList(String[] nodeVecs) {
@@ -41,7 +47,6 @@ class Graph {
         }
 
         this.V = n.length();
-        this.vertices = n.toCharArray();
 
         // create vec list
         adjacencyList = new Node[n.length()];
