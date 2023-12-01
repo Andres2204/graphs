@@ -7,7 +7,7 @@ public class App {
         System.out.println("V: " +  graph.getV() + "\nE: " + graph.getE());
 
 
-        int[][] matrix = graph.getAdjacencyMatrix();
+        int[][] matrix = graph.getWeightedAdjacencyMatrix();
         for (int i = 0; i < matrix.length; i++) {
             System.out.print(graph.getAdjacencyList()[i].getData()+" ");
             for (int j = 0; j < matrix.length; j++) {
@@ -33,5 +33,8 @@ public class App {
 
         System.out.println("\nSearch BFS -> " + graph.BFS('A', 'Z'));
         System.out.println("Search DFS -> " + graph.DFS('A'));
+
+        showGraph pg = new showGraph(graph.getWeightedAdjacencyMatrix(), graph.getVertices());
+        pg.showGraphInterface(matrix);
     }
 }

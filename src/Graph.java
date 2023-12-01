@@ -10,6 +10,7 @@ class Graph {
     private boolean isDirected;
     private int incidencyMatrix[][];
     private int V; // No. vertices
+    private char[] vertices;
     private int E; // No. edges
 
     // [=================== Constructors And Initialization Methods
@@ -40,6 +41,7 @@ class Graph {
         }
 
         this.V = n.length();
+        this.vertices = n.toCharArray();
 
         // create vec list
         adjacencyList = new Node[n.length()];
@@ -95,12 +97,26 @@ class Graph {
         return matrix;
     }
 
+    public int[][] getWeightedAdjacencyMatrix() {
+        int matrix[][] = new int[adjacencyList.length][adjacencyList.length];
+
+        Node p;
+        for (int i = 0; i < adjacencyList.length; i++) {
+            p = adjacencyList[i].getNext();
+            while (p != null) {
+                matrix[i][getIndexOf(p.getData())] = p.getWeight();
+                p = p.getNext();
+            }
+        }
+        return matrix;
+    }
+
     public int[][] getIncidencyMatrix() {
         incidencyMatrix = new int[V][E];
         HashMap<Integer, Character[]> edgesNames = edgesNames();
         for (Integer i = 0; i < edgesNames.size(); i++) {
-            int aIndex = getIndexOf(edgesNames.get(i+1)[0]);
-            int bIndex = getIndexOf(edgesNames.get(i+1)[1]);
+            int aIndex = getIndexOf(edgesNames.get(i + 1)[0]);
+            int bIndex = getIndexOf(edgesNames.get(i + 1)[1]);
 
             incidencyMatrix[aIndex][i] = 1;
             incidencyMatrix[bIndex][i] = isDirected ? -1 : 1;
@@ -376,6 +392,10 @@ class Graph {
 
     public int getV() {
         return V;
+    }
+
+    public char[] getVertices() {
+        return vertices;
     }
 
     public int getE() {
