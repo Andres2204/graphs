@@ -24,7 +24,13 @@ public class App {
                 switch (opt) {
 
                     case 1: // Adjacency Matrix
-                        System.out.println(graph.showAdjacencyList());
+                        for (int i = 0; i < matrix.length; i++) {
+                            System.out.print(graph.getAdjacencyList()[i].getData()+" ");
+                            for (int j = 0; j < matrix.length; j++) {
+                                System.out.print(matrix[i][j]+" ");
+                            }
+                            System.out.println();
+                        }
                         break;
 
                     case 2: // Incidency Matrix
@@ -39,14 +45,7 @@ public class App {
                     break;
 
                     case 3: //  Adjacency List
-                        // int[][] matrix = graph.getWeightedAdjacencyMatrix();
-                        for (int i = 0; i < matrix.length; i++) {
-                            System.out.print(graph.getAdjacencyList()[i].getData()+" ");
-                            for (int j = 0; j < matrix.length; j++) {
-                                System.out.print(matrix[i][j]+" ");
-                            }
-                            System.out.println();
-                        }
+                        System.out.println(graph.showAdjacencyList());
                     break;
 
                     case 4: //Show Graph
